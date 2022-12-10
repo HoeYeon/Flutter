@@ -32,7 +32,6 @@ class WelcomeScreen extends StatelessWidget {
               ),
             ),
             Spacer(), // 1/6
-
             InkWell(
               onTap: () {},
               child: Container(
