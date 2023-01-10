@@ -34,6 +34,7 @@ class QuestionCard extends StatelessWidget {
                 .copyWith(color: kBlackColor),
           ),
           SizedBox(height: kDefaultPadding / 2),
+          // spread operator same as javascript
           ...List.generate(
               question.options.length,
               (index) => Option(
