@@ -50,7 +50,7 @@ class Option extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "1. Test",
+                    "${index}. ${text}",
                     style: TextStyle(
                       color: getTheRightColor(),
                       fontSize: 16,

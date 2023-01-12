@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:quiz_app/models/Questions.dart';
+import 'package:quiz_app/screens/score/score_screen.dart';
 
 // 움직이는 status bar를 위해 사용
 class QuestionController extends GetxController
@@ -96,6 +97,10 @@ class QuestionController extends GetxController
       _animationController.reset();
 
       _animationController.forward().whenComplete(nextQuestion);
+    }
+    // Get package provide us simple way to navigate another page
+    else {
+      Get.to(ScoreScreen());
     }
   }
 
