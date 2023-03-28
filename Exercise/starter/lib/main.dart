@@ -1,76 +1,101 @@
 import 'package:flutter/material.dart';
 import 'product.dart';
 
-class ShoppingList extends StatefulWidget {
-  const ShoppingList({Key? key, required this.products}) : super(key: key);
-
-  final List<Product> products;
-
-  // The framework calls createState the first time a widget appears at a given
-  // location in the tree. If the parent rebuilds and uses the same type of
-  // widget (with the same key), the framework re-uses the State object
-  // instead of creating a new State object.
-
-  @override
-  ShoppingListState createState() => ShoppingListState();
+void main() {
+  runApp(MyApp());
 }
 
-class ShoppingListState extends State<ShoppingList> {
-  final Set<Product> _shoppingCart = <Product>{};
-
-  void _handleCartChanged(Product product, bool inCart) {
-    setState(() {
-      // When a user changes what's in the cart, you need to change
-      // _shoppingCart inside a setState call to trigger a rebuild.
-      // The framework then calls build, below,
-      // which updates the visual appearance of the app.
-
-      if (!inCart) {
-        _shoppingCart.add(product);
-      } else {
-        _shoppingCart.remove(product);
-      }
-    });
-  }
-
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Shopping List'),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        children: widget.products.map((Product product) {
-          print(product.name);
-          print(product.hashCode);
-          return ShoppingListItem(
-            product: product,
-            inCart: _shoppingCart.contains(product),
-            onCartChanged: _handleCartChanged,
-          );
-        }).toList(),
+    return MaterialApp(
+      title: 'Shopping App',
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text("Flutter layout demo"),
+        ),
+        body: ListView(
+          children: [
+            imageSection,
+            titleSection,
+            buttonSection,
+            textSection,
+          ],
+        ),
       ),
     );
   }
 }
 
-void main() {
-  print("hashCode in Main-------");
-  print(Product(name: 'Eggs').hashCode);
-  print(Product(name: 'Eggs').hashCode);
-  print("-----------------------");
+Widget titleSection = Container(
+  padding: const EdgeInsets.all(32),
+  child: Row(
+    children: [
+      Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: const Text("Oeschinen LakeCampGround"),
+            ),
+            const Text("Kandersteg, Switzerland"),
+          ],
+        ),
+      ),
+      const Icon(
+        Icons.star,
+        color: Colors.blue,
+      ),
+      const Text("41"),
+    ],
+  ),
+);
+Color primaryButtonColor = Colors.blue;
 
-  runApp(const MaterialApp(
-    title: 'Shopping App',
-    home: ShoppingList(
-      products: <Product>[
-        Product(name: 'Eggs'),
-        Product(name: 'Flour'),
-        Product(name: 'Eggs'),
-        Product(name: 'Meat'),
-        Product(name: 'Chocolate chips'),
-      ],
-    ),
-  ));
+Widget buttonSection = Row(
+  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  children: [
+    _buildButtonColumn(primaryButtonColor, Icons.call, "Call"),
+    _buildButtonColumn(primaryButtonColor, Icons.near_me, "Near"),
+    _buildButtonColumn(primaryButtonColor, Icons.share, "Share"),
+  ],
+);
+
+Column _buildButtonColumn(Color color, IconData icon, String label) {
+  return Column(
+    mainAxisSize: MainAxisSize.min,
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Icon(icon, color: color),
+      Container(
+        margin: const EdgeInsets.only(top: 8),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w400,
+            color: color,
+          ),
+        ),
+      ),
+    ],
+  );
 }
+
+Widget textSection = Container(
+  padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
+  child: const Text(
+    'Lake Oeschinen lies at the foot of the Blüemlisalp in the Bernese '
+    'Alps. Situated 1,578 meters above sea level, it is one of the '
+    'larger Alpine Lakes. A gondola ride from Kandersteg, followed by a '
+    'half-hour walk through pastures and pine forest, leads you to the '
+    'lake, which warms to 20 degrees Celsius in the summer. Activities '
+    'enjoyed here include rowing, and riding the summer toboggan run.',
+    softWrap: true,
+  ),
+);
+
+Widget imageSection = Container(
+  child: Image.asset('images/lake.jpg', fit: BoxFit.fitWidth),
+);
