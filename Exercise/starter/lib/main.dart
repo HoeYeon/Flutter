@@ -44,11 +44,8 @@ Widget titleSection = Container(
           ],
         ),
       ),
-      const Icon(
-        Icons.star,
-        color: Colors.blue,
-      ),
-      const Text("41"),
+      const FavoriteWidget(),
+      const Text("/41"),
     ],
   ),
 );
@@ -98,6 +95,7 @@ Widget textSection = Container(
 );
 
 Widget imageSection = Container(
+  padding: const EdgeInsetsDirectional.only(bottom: 5),
   child: Image.asset('images/lake.jpg', fit: BoxFit.fitWidth),
 );
 
@@ -109,22 +107,27 @@ class FavoriteWidget extends StatefulWidget {
 }
 
 class _FavoriteWidgetState extends State<FavoriteWidget> {
-  bool _isFavorited = true;
-  int _favoriteCount = 41;
+  bool _isFavorited = false;
+  int _favoriteCount = 40;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         Container(
+          padding: const EdgeInsets.all(0),
           child: IconButton(
-            icon: Icon(Icons.star),
-            onPressed: () => {print("Pressed")},
+            icon: (_isFavorited
+                ? const Icon(Icons.star)
+                : const Icon(Icons.star_border)),
+            onPressed: _toggleFavorite,
+            color: Colors.red[400],
           ),
         ),
         SizedBox(
           width: 18,
           child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 0),
             child: Text('$_favoriteCount'),
           ),
         )
