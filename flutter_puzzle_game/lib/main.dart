@@ -1,115 +1,182 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 void main() {
-  runApp(const MyApp());
+  runApp(WordQuizApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
+class WordQuizApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Word Quiz',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: WordQuizPage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
+class WordQuizPage extends StatefulWidget {
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  _WordQuizPageState createState() => _WordQuizPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _WordQuizPageState extends State<WordQuizPage> {
+  final List<String> _words = [
+    'Apple',
+    'Banana',
+    'Carrot',
+    'Dog',
+    'Elephant',
+    'Fish',
+    'Giraffe',
+    'Horse'
+  ];
 
-  void _incrementCounter() {
+  final Map<String, String> _wordTranslations = {
+    'Apple': '사과',
+    'Banana': '바나나',
+    'Carrot': '당근',
+    'Dog': '개',
+    'Elephant': '코끼리',
+    'Fish': '물고기',
+    'Giraffe': '기린',
+    'Horse': '말'
+  };
+
+  String _currentWord = '';
+  List<String?> _currentOptions = [];
+  String _correctTranslation = '';
+  int _score = 0;
+  bool _quizFinished = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _generateQuiz();
+  }
+
+  void _generateQuiz() {
+    final random = Random();
+    final wordIndex = random.nextInt(_words.length);
+    final word = _words[wordIndex];
+    final correctTranslation = _wordTranslations[word]!;
+    final options = [_wordTranslations[word]];
+
+    while (options.length < 4) {
+      final randomIndex = random.nextInt(_words.length);
+      final randomWord = _words[randomIndex];
+      final translation = _wordTranslations[randomWord]!;
+      if (!options.contains(translation)) {
+        options.add(translation);
+      }
+    }
+
+    options.shuffle();
+
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      _currentWord = word;
+      _currentOptions = options;
+      _correctTranslation = correctTranslation;
     });
+  }
+
+  void _checkAnswer(String answer) {
+    if (!_quizFinished) {
+      if (answer == _correctTranslation) {
+        setState(() {
+          _score++;
+        });
+      }
+      _generateQuiz();
+    }
+  }
+
+  void _finishQuiz() {
+    setState(() {
+      _quizFinished = true;
+    });
+  }
+
+  void _restartQuiz() {
+    setState(() {
+      _score = 0;
+      _quizFinished = false;
+    });
+    _generateQuiz();
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: Text('Word Quiz'),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            'Translate the word:',
+            style: TextStyle(fontSize: 24),
+          ),
+          SizedBox(height: 20),
+          Text(
+            _currentWord,
+            style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 20),
+          if (!_quizFinished)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: _currentOptions
+                  .map(
+                    (option) => Container(
+                      margin: EdgeInsets.symmetric(horizontal: 10),
+                      child: ElevatedButton(
+                        child: Text(option!),
+                        onPressed: () => _checkAnswer(option),
+                      ),
+                    ),
+                  )
+                  .toList(),
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
+          if (!_quizFinished)
+            Container(
+              margin: EdgeInsets.symmetric(vertical: 10),
+              child: ElevatedButton(
+                child: Text('Finish Quiz'),
+                onPressed: _finishQuiz,
+              ),
             ),
-          ],
-        ),
+          if (_quizFinished)
+            Column(
+              children: [
+                Text(
+                  'Quiz Finished!',
+                  style: TextStyle(fontSize: 24),
+                ),
+                SizedBox(height: 10),
+                Text(
+                  'Your Score: $_score / ${_words.length}',
+                  style: TextStyle(fontSize: 20),
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  child: Text('Restart'),
+                  onPressed: _restartQuiz,
+                ),
+              ],
+            ),
+          SizedBox(height: 20),
+          Text(
+            'Score: $_score',
+            style: TextStyle(fontSize: 20),
+          ),
+        ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
