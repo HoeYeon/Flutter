@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
       title: 'Shopping App',
       home: Scaffold(
         appBar: AppBar(
-          title: const Text("Flutter layout demo"),
+          title: const StyledText(text: "Hello"),
         ),
         body: ListView(
           children: [
@@ -23,6 +23,22 @@ class MyApp extends StatelessWidget {
             textSection,
           ],
         ),
+      ),
+    );
+  }
+}
+
+class StyledText extends StatelessWidget {
+  const StyledText({Key? key, required this.text}) : super(key: key);
+
+  final String text;
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: const TextStyle(
+        color: Colors.black,
+        fontSize: 20,
       ),
     );
   }
